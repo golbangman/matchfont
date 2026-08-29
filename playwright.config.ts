@@ -1,6 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = "http://localhost:3000";
+// 기본 포트는 3000. 그 포트가 다른 프로세스에 잡혀 있으면 PORT로 바꿔 띄우고
+// 같은 값을 넘겨 실행한다. 예: `PORT=3001 bun run test:e2e`
+const port = process.env.PORT ?? "3000";
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${port}`;
 
 // 브라우저가 이미 설치된 환경(예: Claude Code 원격 세션)에서는
 // PLAYWRIGHT_CHROMIUM_PATH로 실행 파일을 직접 지정한다.
@@ -29,6 +32,7 @@ export default defineConfig({
   ],
   webServer: {
     command: "bun run dev",
+    env: { PORT: port },
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
